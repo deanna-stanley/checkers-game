@@ -7,17 +7,14 @@ h1 {
 }
 
 .black-square, .red-square {
-    // width: 5vw;
     width: min(5vw, 7vh);
     aspect-ratio: 1 / 1;
 }
 
 .black-square {
     background-color: black;
-    color: white;
 }
 
 .red-square {
     background-color: red;
-    // height: 500px;
 }
