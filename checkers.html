@@ -9,10 +9,9 @@
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-grid.min.css" />
 
         <!-- Additional CSS -->
-        <link rel="stylesheet" href="css/styles.scss" />
+        <link rel="stylesheet" href="css/checkers.scss" />
     </head>
     <body>
-        
         <!-- Header -->
         <h1>Checkers</h1>
         
@@ -20,86 +19,7 @@
         <main>
             
             <!-- Checkerboard -->
-            <div class="d-flex justify-content-center">
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-                <div class="black-square"></div>
-                <div class="red-square"></div>
-            </div>
+            <div id="checkerBoard"></div>
         
         </main>
 
@@ -107,6 +27,6 @@
         <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
         
         <!-- Additional JS -->
-        <script src="js/checkers.js"></script>
+        <script src="js/checkers.js" type="module"></script>
     </body>
 </html>

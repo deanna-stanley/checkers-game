@@ -1,3 +1,5 @@
+$square-width: min(5vw, 7vh);
+
 body {
     background-color: aqua;
 }
@@ -6,7 +8,13 @@ h1 {
     text-align: center;
 }
 
-.black-square, .red-square {
+#checkerBoard {
+    position: relative;
+    width: calc(8 * $square-width);
+    left: calc(50vw - (4 * $square-width));
+}
+
+.black-square, .red-square, .checker {
     width: min(5vw, 7vh);
     aspect-ratio: 1 / 1;
 }
@@ -17,4 +25,12 @@ h1 {
 
 .red-square {
     background-color: red;
+}
+
+.checker {
+    position: absolute;
+    --x: 0;
+    --y: 0;
+    top: calc($square-width * var(--y));
+    left: calc($square-width * var(--x));
 }
