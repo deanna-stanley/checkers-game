@@ -5,7 +5,7 @@ const redCheckerUrl = new URL("../img/red.svg", import.meta.url);
 const boardDiv = document.querySelector("#checkerBoard");
 const playerTurnHeader = document.querySelector("#playerTurnHeader");
 let playerTurn = "Black";
-const playerTurnHeaderText = `${playerTurn}'s Turn`;
+let playerTurnHeaderText = `${playerTurn}'s Turn`;
 let checkerClicked = null;
 
 function createBoard() {
@@ -66,13 +66,14 @@ function checkerClick(event) {
     const checkerColor = checker.style.getPropertyValue("--color");
     const checkerX = parseInt(checker.style.getPropertyValue("--x"));
     const checkerY = parseInt(checker.style.getPropertyValue("--y"));
-    // If the checker clicked is not the right color don't continue
-    if (checkerColor !== playerTurn.toLowerCase()) {
+    
+    if (checkerColor !== playerTurn.toLowerCase()) { // If the checker clicked is not the right color do nothing
         console.log(`Not your turn ${checkerColor}.`);
-        return
-    } else if (checkerClicked === checker) {
+        return;
+    } else if (checkerClicked === checker) { // If the same checker is clicked do nothing
         console.log("Do nothing");
-    } else {
+        return;
+    } else { // See if this is the first checker clicked and check for possible moves
         if (checkerClicked !== null) {
         clearMoveMarkers();    
         }
@@ -96,23 +97,23 @@ function possibleMoves(checkerColor, x, y) {
 
     if (x === 0) {
         // can only move to x + 1, y + yDirection
-        console.log("Only one possible move.");
+        // console.log("Only one possible move.");
         result = isSquareEmpty(newX, newY);
-        console.log(result);
+        // console.log(result);
     } else if (x === 7) {
         // can only move to x - 1, y + yDirection
-        console.log("Only one possible move.");
+        // console.log("Only one possible move.");
         result2 = isSquareEmpty(newX2, newY);
-        console.log(newX2, newY)
-        console.log(result);
+        // console.log(newX2, newY)
+        // console.log(result2);
     } else {
         // can move to x + 1, y + yDirection
         // OR to x - 1, y + yDirection
-        console.log("Two possible moves.");
+        // console.log("Two possible moves.");
         result = isSquareEmpty(newX, newY);
-        console.log(`x + 1 result: ${result}`);
+        // console.log(`x + 1 result: ${result}`);
         result2 = isSquareEmpty(newX2, newY);
-        console.log(`x - 1 result: ${result}`);
+        // console.log(`x - 1 result: ${result}`);
     }
 
     if (result) {
@@ -147,12 +148,33 @@ function clearMoveMarkers() {
         let marker = moveMarkerArray.pop();
         marker.parentNode.removeChild(marker);
     }
-    console.log(moveMarkerArray);
+    // console.log(moveMarkerArray);
 }
 
 function moveMarkerClick(event) {
     // TODO: add code to move checker to new position
-    console.log("move marker clicked");
+    const marker = event.target;
+    const checkerX = parseInt(checkerClicked.style.getPropertyValue("--x"));
+    const checkerY = parseInt(checkerClicked.style.getPropertyValue("--y"));
+    const checkerNewX = parseInt(marker.style.getPropertyValue("--x"));
+    const checkerNewY = parseInt(marker.style.getPropertyValue("--y"));
+
+    clearMoveMarkers();
+    checkerArray[checkerNewY][checkerNewX] = checkerArray[checkerY][checkerX];
+    checkerArray[checkerY][checkerX] = null
+    checkerClicked.style.setProperty("--x", checkerNewX);
+    checkerClicked.style.setProperty("--y", checkerNewY);
+    checkerClicked = null;
+    
+    if (playerTurn === "Black") {
+        playerTurn = "Red";
+        
+    } else {
+        playerTurn = "Black";
+    }
+    playerTurnHeaderText = `${playerTurn}'s Turn`;
+    playerTurnHeader.textContent = playerTurnHeaderText;
+    playerTurnHeader.style.color = playerTurn.toLowerCase();
 } 
 
 createBoard();
