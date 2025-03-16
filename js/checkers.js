@@ -1,9 +1,11 @@
 const checkerArray = [];
+const moveMarkerArray = [];
 const blackCheckerUrl = new URL("../img/black.svg", import.meta.url);
 const redCheckerUrl = new URL("../img/red.svg", import.meta.url);
 const boardDiv = document.querySelector("#checkerBoard");
 const playerTurnHeader = document.querySelector("#playerTurnHeader");
 let playerTurn = "Black";
+const playerTurnHeaderText = `${playerTurn}'s Turn`;
 let pieceClicked = false;
 
 function createBoard() {
@@ -74,33 +76,45 @@ function checkerClick(event) {
 }
 
 function possibleMoves(checkerColor, x, y) {
-    let yDirection;
+    const newX = x + 1;
+    const newX2 = x - 1;
+    let newY;
     let result;
+    let result2;
 
     if (checkerColor === "black") {
-        yDirection = 1;
+        newY = y + 1;
     } else {
-        yDirection = -1;
+        newY = y - 1;
     }
 
     if (x === 0) {
         // can only move to x + 1, y + yDirection
         console.log("Only one possible move.");
-        result = isSquareEmpty(x + 1, y + yDirection);
+        result = isSquareEmpty(newX, newY);
         console.log(result);
     } else if (x === 7) {
         // can only move to x - 1, y + yDirection
         console.log("Only one possible move.");
-        result = isSquareEmpty(x - 1, y + yDirection);
+        result2 = isSquareEmpty(newX2, newY);
+        console.log(newX2, newY)
         console.log(result);
     } else {
         // can move to x + 1, y + yDirection
         // OR to x - 1, y + yDirection
         console.log("Two possible moves.");
-        result = isSquareEmpty(x + 1, y + yDirection);
+        result = isSquareEmpty(newX, newY);
         console.log(`x + 1 result: ${result}`);
-        result = isSquareEmpty(x - 1, y + yDirection);
+        result2 = isSquareEmpty(newX2, newY);
         console.log(`x - 1 result: ${result}`);
+    }
+
+    if (result) {
+        createMoveMarker(newX, newY);
+    }
+
+    if (result2) {
+        createMoveMarker(newX2, newY);
     }
 }
 
@@ -112,5 +126,20 @@ function isSquareEmpty(x, y) {
     }
 }
 
+function createMoveMarker(x, y) {
+    let moveMarker = document.createElement("span");
+    moveMarker.className = "moveMarker";
+    moveMarker.style.setProperty("--x", x);
+    moveMarker.style.setProperty("--y", y);
+    moveMarker.addEventListener("click", moveMarkerClick);
+    boardDiv.appendChild(moveMarker);
+    moveMarkerArray.push(moveMarker);
+}
+
+function moveMarkerClick(event) {
+    // TODO: add code to move checker to new position
+    console.log("move marker clicked");
+} 
+
 createBoard();
-playerTurnHeader.textContent = `${playerTurn}'s Turn`;
+playerTurnHeader.textContent = playerTurnHeaderText;

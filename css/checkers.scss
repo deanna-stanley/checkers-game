@@ -1,4 +1,7 @@
 $square-width: min(5vw, 7vh);
+$top: calc($square-width * var(--y));
+$left: calc($square-width * var(--x));
+$marker-width: calc($square-width / 2);
 
 body {
     background-color: aqua;
@@ -21,7 +24,7 @@ h1 {
 .black-square, .red-square, .checker {
     --x: 0;
     --y: 0;
-    width: min(5vw, 7vh);
+    width: $square-width;
     aspect-ratio: 1 / 1;
 }
 
@@ -35,6 +38,18 @@ h1 {
 
 .checker {
     position: absolute;
-    top: calc($square-width * var(--y));
-    left: calc($square-width * var(--x));
+    top: $top;
+    left: $left;
+}
+
+.moveMarker {
+    --x: 0;
+    --y: 0;
+    width: $marker-width;
+    height: $marker-width;
+    background-color: #bbb;
+    border-radius: 50%;
+    position: absolute;
+    top: calc($top + (($square-width - $marker-width) / 2));
+    left: calc($left + (($square-width - $marker-width) / 2));
 }
