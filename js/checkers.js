@@ -6,7 +6,7 @@ const boardDiv = document.querySelector("#checkerBoard");
 const playerTurnHeader = document.querySelector("#playerTurnHeader");
 let playerTurn = "Black";
 const playerTurnHeaderText = `${playerTurn}'s Turn`;
-let pieceClicked = false;
+let checkerClicked = null;
 
 function createBoard() {
     // Loop 8 times to create the 8 rows on the board
@@ -70,7 +70,13 @@ function checkerClick(event) {
     if (checkerColor !== playerTurn.toLowerCase()) {
         console.log(`Not your turn ${checkerColor}.`);
         return
+    } else if (checkerClicked === checker) {
+        console.log("Do nothing");
     } else {
+        if (checkerClicked !== null) {
+        clearMoveMarkers();    
+        }
+        checkerClicked = checker;
         possibleMoves(checkerColor, checkerX, checkerY);
     }
 }
@@ -134,6 +140,14 @@ function createMoveMarker(x, y) {
     moveMarker.addEventListener("click", moveMarkerClick);
     boardDiv.appendChild(moveMarker);
     moveMarkerArray.push(moveMarker);
+}
+
+function clearMoveMarkers() {
+    while (moveMarkerArray.length > 0) {
+        let marker = moveMarkerArray.pop();
+        marker.parentNode.removeChild(marker);
+    }
+    console.log(moveMarkerArray);
 }
 
 function moveMarkerClick(event) {
