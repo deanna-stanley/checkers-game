@@ -1,11 +1,12 @@
 const checkerArray = [];
 const blackCheckerUrl = new URL("../img/black.svg", import.meta.url);
 const redCheckerUrl = new URL("../img/red.svg", import.meta.url);
-let playerTurn = "black";
+const boardDiv = document.querySelector("#checkerBoard");
+const playerTurnHeader = document.querySelector("#playerTurnHeader");
+let playerTurn = "Black";
+let pieceClicked = false;
 
 function createBoard() {
-    const boardDiv = document.querySelector("#checkerBoard");
-
     // Loop 8 times to create the 8 rows on the board
     for (let i = 0; i < 8; i++) {
         let rowArray = [];
@@ -64,7 +65,7 @@ function checkerClick(event) {
     const checkerX = parseInt(checker.style.getPropertyValue("--x"));
     const checkerY = parseInt(checker.style.getPropertyValue("--y"));
     // If the checker clicked is not the right color don't continue
-    if (checkerColor !== playerTurn) {
+    if (checkerColor !== playerTurn.toLowerCase()) {
         console.log(`Not your turn ${checkerColor}.`);
         return
     } else {
@@ -112,9 +113,4 @@ function isSquareEmpty(x, y) {
 }
 
 createBoard();
-// const el = document.body.querySelector("style[CSS.escape(--x)='7'], style[CSS.escape(--y)='6']");
-// console.log(el);
-// console.log(boardArray);
-
-
-// TODO: make an array of checkers
+playerTurnHeader.textContent = `${playerTurn}'s Turn`;

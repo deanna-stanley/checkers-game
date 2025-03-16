@@ -14,6 +14,10 @@ h1 {
     left: calc(50vw - (4 * $square-width));
 }
 
+#playerTurnHeader {
+    text-align: center;
+}
+
 .black-square, .red-square, .checker {
     --x: 0;
     --y: 0;
