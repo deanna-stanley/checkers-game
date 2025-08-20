@@ -9,6 +9,7 @@ const playerTurnHeader = document.querySelector("#playerTurnHeader");
 let playerTurn = "Black";
 let playerTurnHeaderText = `${playerTurn}'s Turn`;
 let checkerClicked = null;
+let jump = false;
 
 function createBoard() {
     // Loop 8 times to create the 8 rows on the board
@@ -77,12 +78,14 @@ function checkerClick(event) {
     } else if (checkerClicked === checker) { // If the same checker is clicked do nothing
         console.log("Do nothing");
         return;
+    } else if (jump) {
+        return;
     } else { // See if this is the first checker clicked and check for possible moves
         if (checkerClicked !== null) {
         clearMoveMarkers();    
         }
         checkerClicked = checker;
-        possibleMoves(checkerColor, checkerX, checkerY, false);
+        possibleMoves(checkerColor, checkerX, checkerY, jump);
     }
 }
 
@@ -233,11 +236,14 @@ function moveMarkerClick(event) {
         checkerRemoveY = checkerY - 1;
     }
     if (Math.abs(xDiff) === 2) {
+        jump = true;
         const checkerToRemove = checkerArray[checkerRemoveY][checkerRemoveX];
         checkerToRemove.parentNode.removeChild(checkerToRemove);
         checkerArray[checkerRemoveY][checkerRemoveX] = null;
 
-        possibleMoves(checkerColor, checkerNewX, checkerNewY, true);
+        if (((checkerNewY < 6) && (checkerColor === "black")) || ((checkerNewY > 1) && (checkerColor ==="red"))) {
+            possibleMoves(checkerColor, checkerNewX, checkerNewY, jump);
+        }
     }
     
     if (moveMarkerArray.length === 0) {
@@ -246,6 +252,7 @@ function moveMarkerClick(event) {
         }
         
         checkerClicked = null;
+        jump = false;
     
         changeTurns();
     }
