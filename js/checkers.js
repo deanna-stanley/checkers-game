@@ -70,35 +70,35 @@ function checkerClick(event) {
     const checker = event.target;
     const checkerColor = checker.style.getPropertyValue("--color");
     const king = checker.style.getPropertyValue("--king") === "true" ? true : false;
-    // const checkerX = parseInt(checker.style.getPropertyValue("--x"));
-    // const checkerY = parseInt(checker.style.getPropertyValue("--y"));
     const checkerCoordinate = [
-            parseInt(checker.style.getPropertyValue("--x")),
-            parseInt(checker.style.getPropertyValue("--y"))
-        ];
+        parseInt(checker.style.getPropertyValue("--x")),
+        parseInt(checker.style.getPropertyValue("--y"))
+    ];
     
-    if (checkerColor !== playerTurn.toLowerCase()) { // If the checker clicked is not the right color do nothing
-        // console.log(`Not your turn ${checkerColor}.`);
+    // Guard clause: if the checker clicked is the wrong color, or is the same checker clicked again,
+    // or a jump is in progress then exit without doing anything
+    if (
+        checkerColor !== playerTurn.toLowerCase() ||
+        checkerClicked === checker || 
+        jump
+    ) {
         return;
-    } else if (checkerClicked === checker) { // If the same checker is clicked do nothing
-        // console.log("Do nothing");
-        return;
-    } else if (jump) { // If a jump is in progress do nothing
-        return;
-    } else { // See if this is the first checker clicked and check for possible moves
-        if (checkerClicked !== null) {
-        clearMoveMarkers();    
-        }
-        checkerClicked = checker;
-        const possibleMoveDirections = getPossibleMoveDirections(checkerColor, king);
-        let destinationCoordinates = [];
-        let result = [];
-        possibleMoveDirections.forEach(direction => {
-            result = addDirectionToCoordinate(checkerCoordinate, direction);
-            destinationCoordinates.push(result);
-        });
-        validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor);
     }
+
+    // Main move logic
+
+    // If a previous checker was clicked then clear the move markers
+    if (checkerClicked !== null) {
+        clearMoveMarkers();    
+    }
+
+    checkerClicked = checker;
+    
+    const possibleMoveDirections = getPossibleMoveDirections(checkerColor, king);
+    let destinationCoordinates = possibleMoveDirections.map(direction => 
+        addDirectionToCoordinate(checkerCoordinate, direction)
+    );
+    validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor);
 }
 
 // Determine which directions a checker can move based on color and if it is a king
