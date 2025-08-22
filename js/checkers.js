@@ -95,9 +95,11 @@ function checkerClick(event) {
     checkerClicked = checker;
     
     const possibleMoveDirections = getPossibleMoveDirections(checkerColor, king);
-    let destinationCoordinates = possibleMoveDirections.map(direction => 
+    
+    const destinationCoordinates = possibleMoveDirections.map(direction => 
         addDirectionToCoordinate(checkerCoordinate, direction)
     );
+    
     validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor);
 }
 
