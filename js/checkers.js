@@ -99,7 +99,7 @@ function checkerClick(event) {
     const destinationCoordinates = possibleMoveDirections.map(direction => 
         addDirectionToCoordinate(checkerCoordinate, direction)
     );
-    
+
     validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor);
 }
 
@@ -135,23 +135,42 @@ function addDirectionToCoordinate(startingCoordinate, possibleMoveDirection) {
 
 // Check to see if the destinations are valid spaces on the board 
 // and then if they are empty or can be jumped and create move markers where appropriate
-function validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly = false) { // TODO: change name of function or move out creation of move markers
-    let jumpCoordinate = [];
-    let emptyResult;
+function validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly = false) {
+    // let jumpCoordinate = [];
+    // let emptyResult;
+    // destinationCoordinates.forEach((coordinate, i) => {
+    //     if (isCoordinateOnBoard(coordinate)) {
+    //         emptyResult = isSquareEmpty(coordinate);
+    //         if (emptyResult.Empty && !jumpsOnly) {
+    //             createMoveMarker(coordinate);
+    //         } else if (!emptyResult.Empty && emptyResult.Color !== checkerColor) {
+    //             // check if it can be jumped
+    //             jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
+    //             if (isCoordinateOnBoard(jumpCoordinate)) {
+    //                 emptyResult = isSquareEmpty(jumpCoordinate);
+    //                 if (emptyResult.Empty) {
+    //                     createMoveMarker(jumpCoordinate, true, coordinate);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+
     destinationCoordinates.forEach((coordinate, i) => {
-        if (isCoordinateOnBoard(coordinate)) {
-            emptyResult = isSquareEmpty(coordinate);
-            if (emptyResult.Empty && !jumpsOnly) {
-                createMoveMarker(coordinate);
-            } else if (!emptyResult.Empty && emptyResult.Color !== checkerColor) {
-                // check if it can be jumped
-                jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
-                if (isCoordinateOnBoard(jumpCoordinate)) {
-                    emptyResult = isSquareEmpty(jumpCoordinate);
-                    if (emptyResult.Empty) {
-                        createMoveMarker(jumpCoordinate, true, coordinate);
-                    }
-                }
+        if (!isCoordinateOnBoard(coordinate)) {
+            return;
+        }
+
+        const { Empty, Color } = isSquareEmpty(coordinate);
+
+        if (Empty && !jumpsOnly) {
+            createMoveMarker(coordinate);
+        }
+
+        if (!Empty && Color !== checkerColor) {
+            const jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
+            if (isCoordinateOnBoard(jumpCoordinate) && isSquareEmpty(jumpCoordinate).Empty) {
+                createMoveMarker(jumpCoordinate, true, coordinate);
             }
         }
     });
