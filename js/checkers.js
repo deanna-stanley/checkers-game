@@ -136,26 +136,6 @@ function addDirectionToCoordinate(startingCoordinate, possibleMoveDirection) {
 // Check to see if the destinations are valid spaces on the board 
 // and then if they are empty or can be jumped and create move markers where appropriate
 function validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly = false) {
-    // let jumpCoordinate = [];
-    // let emptyResult;
-    // destinationCoordinates.forEach((coordinate, i) => {
-    //     if (isCoordinateOnBoard(coordinate)) {
-    //         emptyResult = isSquareEmpty(coordinate);
-    //         if (emptyResult.Empty && !jumpsOnly) {
-    //             createMoveMarker(coordinate);
-    //         } else if (!emptyResult.Empty && emptyResult.Color !== checkerColor) {
-    //             // check if it can be jumped
-    //             jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
-    //             if (isCoordinateOnBoard(jumpCoordinate)) {
-    //                 emptyResult = isSquareEmpty(jumpCoordinate);
-    //                 if (emptyResult.Empty) {
-    //                     createMoveMarker(jumpCoordinate, true, coordinate);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // });
-
     destinationCoordinates.forEach((coordinate, i) => {
         if (!isCoordinateOnBoard(coordinate)) {
             return;
@@ -176,31 +156,16 @@ function validateDestinations(destinationCoordinates, possibleMoveDirections, ch
     });
 }
 
-function isCoordinateOnBoard(coordinate) {
-    return ((coordinate[0] >= 0 && coordinate[0] <= 7) && (coordinate[1] >= 0 && coordinate[1] <= 7)) ? true : false;
+function isCoordinateOnBoard([x, y]) {
+    return (x >= 0 && x <= 7) && (y >= 0 && y <= 7);
 }
 
-function isSquareEmpty(coordinate) {
-    let empty;
-    let checkerColor;
-    const x = coordinate[0];
-    const y = coordinate[1];
+function isSquareEmpty([x, y]) {
+    const checker = checkerArray[y][x]
     
-    if (checkerArray[y][x] === null) {
-        empty = true;
-        checkerColor = null;
-    } else {
-        empty = false;
-        // console.log(checkerArray[y][x]);
-        const checker = checkerArray[y][x];
-        // console.log(checker.style.getPropertyValue("--color"));
-        checkerColor = checker.style.getPropertyValue("--color");
-        // console.log(checkerColor);
-    }
-
     return {
-        Empty: empty,
-        Color: checkerColor
+        Empty: !checker,
+        Color: checker ? checker.style.getPropertyValue("--color") : null
     };
 }
 
