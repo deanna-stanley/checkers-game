@@ -169,18 +169,19 @@ function isSquareEmpty([x, y]) {
     };
 }
 
-function createMoveMarker(coordinate, jump = false, jumpedCheckerCoordinate) {
-    const x = coordinate[0];
-    const y = coordinate[1];
-    let moveMarker = document.createElement("span");
+function createMoveMarker([x, y], jump = false, jumpedCheckerCoordinate = null) {
+    const moveMarker = document.createElement("span");
     moveMarker.className = "moveMarker";
-    moveMarker.style.setProperty("--x", x);
-    moveMarker.style.setProperty("--y", y);
-    moveMarker.style.setProperty("--jump", jump);
-    if (jump) {
-        moveMarker.style.setProperty("--jumpedX", jumpedCheckerCoordinate[0]);
-        moveMarker.style.setProperty("--jumpedY", jumpedCheckerCoordinate[1]);
+    moveMarker.style.setProperty("--x", `${x}`);
+    moveMarker.style.setProperty("--y", `${y}`);
+    moveMarker.style.setProperty("--jump", `${jump}`);
+    
+    if (jump && jumpedCheckerCoordinate) {
+        const [jumpedX, jumpedY] = jumpedCheckerCoordinate
+        moveMarker.style.setProperty("--jumpedX", `${jumpedX}`);
+        moveMarker.style.setProperty("--jumpedY", `${jumpedY}`);
     }
+
     moveMarker.addEventListener("click", moveMarkerClick);
     boardDiv.appendChild(moveMarker);
     moveMarkerArray.push(moveMarker);
@@ -191,7 +192,6 @@ function clearMoveMarkers() {
         let marker = moveMarkerArray.pop();
         marker.parentNode.removeChild(marker);
     }
-    // console.log(moveMarkerArray);
 }
 
 function moveMarkerClick(event) {
