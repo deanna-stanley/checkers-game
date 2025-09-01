@@ -1,7 +1,7 @@
 {
   "name": "checkers-game",
   "version": "1.0.0",
-  "source": "checkers.html",
+  "source": "index.html",
   "scripts": {
     "start": "parcel --open",
     "build": "parcel build"
