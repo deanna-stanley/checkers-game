@@ -69,7 +69,7 @@ function createBoard() {
 function checkerClick(event) {
     const checker = event.target;
     const checkerColor = checker.style.getPropertyValue("--color");
-    const king = checker.style.getPropertyValue("--king") === "true" ? true : false;
+    const isKing = checker.style.getPropertyValue("--king") === "true" ? true : false;
     const checkerCoordinate = [
         parseInt(checker.style.getPropertyValue("--x")),
         parseInt(checker.style.getPropertyValue("--y"))
@@ -94,13 +94,7 @@ function checkerClick(event) {
 
     checkerClicked = checker;
     
-    const possibleMoveDirections = getPossibleMoveDirections(checkerColor, king);
-    
-    const destinationCoordinates = possibleMoveDirections.map(direction => 
-        addDirectionToCoordinate(checkerCoordinate, direction)
-    );
-
-    validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor);
+    findAndRenderMoves(checkerCoordinate, checkerColor, isKing);
 }
 
 // Determine which directions a checker can move based on color and if it is a king
@@ -188,74 +182,69 @@ function createMoveMarker([x, y], jump = false, jumpedCheckerCoordinate = null) 
 }
 
 function clearMoveMarkers() {
-    while (moveMarkerArray.length > 0) {
-        let marker = moveMarkerArray.pop();
-        marker.parentNode.removeChild(marker);
+    while (moveMarkerArray.length) {
+        const marker = moveMarkerArray.pop();
+        marker.remove();
     }
 }
 
 function moveMarkerClick(event) {
-    
-    const marker = event.target;
+    const marker = event.currentTarget;
     
     clearMoveMarkers();
     
     const checkerColor = checkerClicked.style.getPropertyValue("--color");
-    let king = checkerClicked.style.getPropertyValue("--king") === "true" ? true : false;
+    let isKing = checkerClicked.style.getPropertyValue("--king") === "true";
 
-    // Move checker to new position
+    // Current and new positions
     const checkerX = parseInt(checkerClicked.style.getPropertyValue("--x"));
     const checkerY = parseInt(checkerClicked.style.getPropertyValue("--y"));
     const checkerNewX = parseInt(marker.style.getPropertyValue("--x"));
     const checkerNewY = parseInt(marker.style.getPropertyValue("--y"));
     
-    checkerArray[checkerNewY][checkerNewX] = checkerArray[checkerY][checkerX]; // TODO: Fix this
+    // Move checker to new position
+    checkerArray[checkerNewY][checkerNewX] = checkerArray[checkerY][checkerX];
     checkerArray[checkerY][checkerX] = null;
     checkerClicked.style.setProperty("--x", checkerNewX);
     checkerClicked.style.setProperty("--y", checkerNewY);
     
-    if (((checkerNewY === 7 && checkerColor === 'black') || (checkerNewY === 0 && checkerColor === 'red')) && !king) {
+    // Promote to king if reaching the far row and not already a king
+    const reachedKingRow = (checkerColor === "black" && checkerNewY === 7) || (checkerColor === "red" && checkerNewY === 0);
+    if (reachedKingRow && !isKing) {
         makeKing(checkerColor);
-        king = true;
+        isKing = true;
     }
     
-    // If move was a jump remove the jumped checker
-    if (marker.style.getPropertyValue("--jump") === "true") {
-        jump = true; // TODO: do I still need this variable?
+    // If move was a jump remove the jumped checker and check for additional jumps
+    const wasJump = marker.style.getPropertyValue("--jump") === "true";
+    if (wasJump) {
+        // Mark jump state
+        jump = true;
+
+        // Remove jumped checker
         const jumpedCheckerX = parseInt(marker.style.getPropertyValue("--jumpedX"));
         const jumpedCheckerY = parseInt(marker.style.getPropertyValue("--jumpedY"));
-        const checkerToRemove = checkerArray[jumpedCheckerY][jumpedCheckerX];
-        checkerToRemove.parentNode.removeChild(checkerToRemove);
-        checkerArray[jumpedCheckerY][jumpedCheckerX] = null;
-
-        // TODO: check if there are any more jumps (put this in function?)
-        const possibleMoveDirections = getPossibleMoveDirections(checkerColor, king);
-        let destinationCoordinates = [];
-        let result = [];
-        possibleMoveDirections.forEach(direction => {
-            result = addDirectionToCoordinate([checkerNewX, checkerNewY], direction);
-            destinationCoordinates.push(result);
-        });
-        validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, true);
+        const jumpedChecker = checkerArray[jumpedCheckerY][jumpedCheckerX];
+        if (jumpedChecker) {
+            jumpedChecker.remove();
+            checkerArray[jumpedCheckerY][jumpedCheckerX] = null;
+        }
+        
+        // 'true' indicates that we are only looking for chain jumps
+        findAndRenderMoves([checkerNewX, checkerNewY], checkerColor, isKing, true);
     }
     
+    // If no more markers were generated then clear checkerClicked and jump and end the turn
     if (moveMarkerArray.length === 0) {
-        
-        
         checkerClicked = null;
         jump = false;
     
-        changeTurns();
+        endTurn();
     }
-    
 }
 
-function changeTurns() {
-    if (playerTurn === "Black") {
-        playerTurn = "Red";
-    } else {
-        playerTurn = "Black";
-    }
+function endTurn() {
+    playerTurn = (playerTurn === "Black") ? "Red" : "Black";
     playerTurnHeaderText = `${playerTurn}'s Turn`;
     playerTurnHeader.textContent = playerTurnHeaderText;
     playerTurnHeader.style.color = playerTurn.toLowerCase();
@@ -266,10 +255,18 @@ function makeKing(checkerColor) {
     if (checkerColor === "black") {
         checkerClicked.src = blackKingUrl;
         checkerClicked.alt = "black king checker";
-    } else if (checkerColor === "red") {
+    } else {
         checkerClicked.src = redKingUrl;
         checkerClicked.alt = "red king checker";
     }
+}
+
+function findAndRenderMoves(checkerCoordinate, checkerColor, isKing, jumpsOnly = false) {
+    const possibleMoveDirections = getPossibleMoveDirections(checkerColor, isKing);
+    const destinationCoordinates = possibleMoveDirections.map(direction => 
+        addDirectionToCoordinate(checkerCoordinate, direction)
+    );
+    validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly);
 }
 
 createBoard();
