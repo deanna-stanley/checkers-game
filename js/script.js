@@ -11,6 +11,24 @@ let playerTurnHeaderText = `${playerTurn}'s Turn`;
 let checkerClicked = null;
 let jump = false;
 
+// Tiny helper functions to streamline the getting and setting of element dataset values
+// Base helpers
+const getData = (el, key) => el.dataset[key];
+const getNum  = (el, key) => Number(el.dataset[key]);
+const getBool = (el, key) => el.dataset[key] === "true";
+
+const setData = (el, key, value) => { el.dataset[key] = String(value); };
+const setNum  = (el, key, value) => { el.dataset[key] = String(Number(value)); };
+const setBool = (el, key, value) => { el.dataset[key] = value ? "true" : "false"; };
+
+// Write dataset AND the CSS var
+// For use with x and y since those are used in CSS calculations
+function setNumState(el, key, value, { cssVar = true } = {}) {
+  setNum(el, key, value);
+  el.style.setProperty(`--${key}`, el.dataset[key]);
+}
+
+
 function createBoard() {
     // Loop 8 times to create the 8 rows on the board
     for (let i = 0; i < 8; i++) {
@@ -27,8 +45,8 @@ function createBoard() {
                 squareDiv.className = "red-square";
             } else { 
                 squareDiv.className = "black-square";
-                squareDiv.style.setProperty("--x", j);
-                squareDiv.style.setProperty("--y", i);
+                setNumState(squareDiv, "x", j);
+                setNumState(squareDiv, "y", i);
                 
                 // Put checkers on the black spaces of the first 3 rows and last 3 rows
                 if (i <= 2) { // black checkers
@@ -36,10 +54,10 @@ function createBoard() {
                     image.src = blackCheckerUrl;
                     image.alt = "black checker";
                     image.className = "checker";
-                    image.style.setProperty("--x", j);
-                    image.style.setProperty("--y", i);
-                    image.style.setProperty("--color", "black");
-                    image.style.setProperty("--king", "false");
+                    setNumState(image, "x", j);
+                    setNumState(image, "y", i);
+                    setData(image, "color", "black");
+                    setBool(image, "king", false);
                     image.addEventListener("click", checkerClick);
                     boardDiv.appendChild(image);
                 } else if (i >= 5) { // red checkers
@@ -47,10 +65,10 @@ function createBoard() {
                     image.src = redCheckerUrl;
                     image.alt = "red checker"
                     image.className = "checker";
-                    image.style.setProperty("--x", j);
-                    image.style.setProperty("--y", i);
-                    image.style.setProperty("--color", "red");
-                    image.style.setProperty("--king", "false");
+                    setNumState(image, "x", j);
+                    setNumState(image, "y", i);
+                    setData(image, "color", "red");
+                    setBool(image, "king", false);
                     image.addEventListener("click", checkerClick);
                     boardDiv.appendChild(image);
                 } else { // no checkers
@@ -61,18 +79,16 @@ function createBoard() {
             rowDiv.appendChild(squareDiv);
         }
         checkerArray.push(rowArray);
-        // console.log(checkerArray);
     }
-
 }
 
 function checkerClick(event) {
     const checker = event.target;
-    const checkerColor = checker.style.getPropertyValue("--color");
-    const isKing = checker.style.getPropertyValue("--king") === "true" ? true : false;
+    const checkerColor = getData(checker, "color");
+    const isKing = getBool(checker, "king");
     const checkerCoordinate = [
-        parseInt(checker.style.getPropertyValue("--x")),
-        parseInt(checker.style.getPropertyValue("--y"))
+        getNum(checker, "x"),
+        getNum(checker, "y"),
     ];
     
     // Guard clause: if the checker clicked is the wrong color, or is the same checker clicked again,
@@ -159,21 +175,21 @@ function isSquareEmpty([x, y]) {
     
     return {
         Empty: !checker,
-        Color: checker ? checker.style.getPropertyValue("--color") : null
+        Color: checker ? getData(checker, "color") : null
     };
 }
 
 function createMoveMarker([x, y], jump = false, jumpedCheckerCoordinate = null) {
     const moveMarker = document.createElement("span");
     moveMarker.className = "moveMarker";
-    moveMarker.style.setProperty("--x", `${x}`);
-    moveMarker.style.setProperty("--y", `${y}`);
-    moveMarker.style.setProperty("--jump", `${jump}`);
-    
+    setNumState(moveMarker, "x", x);
+    setNumState(moveMarker, "y", y);
+    setBool(moveMarker, "jump", jump)
+     
     if (jump && jumpedCheckerCoordinate) {
         const [jumpedX, jumpedY] = jumpedCheckerCoordinate
-        moveMarker.style.setProperty("--jumpedX", `${jumpedX}`);
-        moveMarker.style.setProperty("--jumpedY", `${jumpedY}`);
+        setNum(moveMarker, "jumpedX", jumpedX);
+        setNum(moveMarker, "jumpedY", jumpedY);
     }
 
     moveMarker.addEventListener("click", moveMarkerClick);
@@ -193,20 +209,20 @@ function moveMarkerClick(event) {
     
     clearMoveMarkers();
     
-    const checkerColor = checkerClicked.style.getPropertyValue("--color");
-    let isKing = checkerClicked.style.getPropertyValue("--king") === "true";
+    const checkerColor = getData(checkerClicked, "color");
+    let isKing = getBool(checkerClicked, "king");
 
     // Current and new positions
-    const checkerX = parseInt(checkerClicked.style.getPropertyValue("--x"));
-    const checkerY = parseInt(checkerClicked.style.getPropertyValue("--y"));
-    const checkerNewX = parseInt(marker.style.getPropertyValue("--x"));
-    const checkerNewY = parseInt(marker.style.getPropertyValue("--y"));
+    const checkerX = getNum(checkerClicked, "x");
+    const checkerY = getNum(checkerClicked, "y");
+    const checkerNewX = getNum(marker, "x");
+    const checkerNewY = getNum(marker, "y");
     
     // Move checker to new position
     checkerArray[checkerNewY][checkerNewX] = checkerArray[checkerY][checkerX];
     checkerArray[checkerY][checkerX] = null;
-    checkerClicked.style.setProperty("--x", checkerNewX);
-    checkerClicked.style.setProperty("--y", checkerNewY);
+    setNumState(checkerClicked, "x", checkerNewX);
+    setNumState(checkerClicked, "y", checkerNewY);
     
     // Promote to king if reaching the far row and not already a king
     const reachedKingRow = (checkerColor === "black" && checkerNewY === 7) || (checkerColor === "red" && checkerNewY === 0);
@@ -216,14 +232,14 @@ function moveMarkerClick(event) {
     }
     
     // If move was a jump remove the jumped checker and check for additional jumps
-    const wasJump = marker.style.getPropertyValue("--jump") === "true";
+    const wasJump = getBool(marker, "jump");
     if (wasJump) {
         // Mark jump state
         jump = true;
 
         // Remove jumped checker
-        const jumpedCheckerX = parseInt(marker.style.getPropertyValue("--jumpedX"));
-        const jumpedCheckerY = parseInt(marker.style.getPropertyValue("--jumpedY"));
+        const jumpedCheckerX = getNum(marker, "jumpedX");
+        const jumpedCheckerY = getNum(marker, "jumpedY");
         const jumpedChecker = checkerArray[jumpedCheckerY][jumpedCheckerX];
         if (jumpedChecker) {
             jumpedChecker.remove();
@@ -251,7 +267,7 @@ function endTurn() {
 }
 
 function makeKing(checkerColor) {
-    checkerClicked.style.setProperty("--king", "true");
+    setBool(checkerClicked, "king", true);
     if (checkerColor === "black") {
         checkerClicked.src = blackKingUrl;
         checkerClicked.alt = "black king checker";
