@@ -28,55 +28,55 @@ function setNumState(el, key, value, { cssVar = true } = {}) {
   el.style.setProperty(`--${key}`, el.dataset[key]);
 }
 
+function createChecker(color, x, y) {
+    const image = document.createElement("img");
+    image.className = "checker";
+    image.src = color === "black" ? blackCheckerUrl : redCheckerUrl;
+    image.alt = `${color} checker`;
+    setNumState(image, "x", x);
+    setNumState(image, "y", y);
+    setData(image, "color", color);
+    setBool(image, "king", false);
+    image.draggable = false;
+    image.addEventListener("click", checkerClick);
+    return image;
+}
+
 function createBoard() {
-    // Loop 8 times to create the 8 rows on the board
-    for (let i = 0; i < 8; i++) {
-        let rowArray = [];
-        let rowDiv = document.createElement("div");
-        rowDiv.className = "d-flex";
-        boardDiv.appendChild(rowDiv);
+    const frag = document.createDocumentFragment();
+    
+    for (let y = 0; y < 8; y++) {
+        const row = [];
+        const rowDiv = document.createElement("div");
+        rowDiv.className = "board-row";
         
-        // Loop 8 times to create the 8 squares in each row
-        for (let j = 0; j < 8; j++) {
-            let image;
-            let squareDiv = document.createElement("div");
-            if ((i + j) % 2 === 0) {
-                squareDiv.className = "red-square";
-            } else { 
-                squareDiv.className = "black-square";
-                
-                // Put checkers on the black spaces of the first 3 rows and last 3 rows
-                if (i <= 2) { // black checkers
-                    image = document.createElement("img");
-                    image.src = blackCheckerUrl;
-                    image.alt = "black checker";
-                    image.className = "checker";
-                    setNumState(image, "x", j);
-                    setNumState(image, "y", i);
-                    setData(image, "color", "black");
-                    setBool(image, "king", false);
-                    image.addEventListener("click", checkerClick);
-                    boardDiv.appendChild(image);
-                } else if (i >= 5) { // red checkers
-                    image = document.createElement("img");
-                    image.src = redCheckerUrl;
-                    image.alt = "red checker"
-                    image.className = "checker";
-                    setNumState(image, "x", j);
-                    setNumState(image, "y", i);
-                    setData(image, "color", "red");
-                    setBool(image, "king", false);
-                    image.addEventListener("click", checkerClick);
-                    boardDiv.appendChild(image);
-                } else { // no checkers
-                    image = null;
+        for (let x = 0; x< 8; x++) {
+            let checker = null;
+            const square = document.createElement("div");
+            const isRed = ((x +y) % 2) === 0;
+            square.className = isRed ? "red-square" : "black-square";
+
+            if(!isRed) {
+                if (y <= 2) {
+                    checker = createChecker("black", x, y);
+                } else if (y >= 5) {
+                    checker = createChecker("red", x, y);
                 }
             }
-            rowArray.push(image);
-            rowDiv.appendChild(squareDiv);
+
+            row.push(checker);
+            rowDiv.appendChild(square);
+            if (checker) {
+                frag.appendChild(checker);
+            }
         }
-        checkerArray.push(rowArray);
+
+        checkerArray.push(row);
+        frag.appendChild(rowDiv);
     }
+
+    boardDiv.innerHTML = ""; // safe reset
+    boardDiv.appendChild(frag);
 }
 
 function checkerClick(event) {
