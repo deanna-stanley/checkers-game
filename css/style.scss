@@ -1,7 +1,6 @@
 $square-width: min(5vw, 7vh);
-$top: calc($square-width * var(--y));
-$left: calc($square-width * var(--x));
 $marker-width: calc($square-width / 2);
+$marker-offset: calc(($square-width - $marker-width) / 2);
 
 body {
     background-color: aqua;
@@ -14,7 +13,7 @@ h1 {
 #checkerBoard {
     position: relative;
     width: calc(8 * $square-width);
-    left: calc(50vw - (4 * $square-width));
+    margin: 0 auto;
 }
 
 #playerTurnHeader {
@@ -22,8 +21,6 @@ h1 {
 }
 
 .black-square, .red-square, .checker {
-    --x: 0;
-    --y: 0;
     width: $square-width;
     aspect-ratio: 1 / 1;
 }
@@ -38,18 +35,16 @@ h1 {
 
 .checker {
     position: absolute;
-    top: $top;
-    left: $left;
+    top: calc(var(--y, 0) * $square-width);
+    left: calc(var(--x, 0) * $square-width);
 }
 
 .moveMarker {
-    --x: 0;
-    --y: 0;
     width: $marker-width;
     height: $marker-width;
     background-color: #bbb;
     border-radius: 50%;
     position: absolute;
-    top: calc($top + (($square-width - $marker-width) / 2));
-    left: calc($left + (($square-width - $marker-width) / 2));
+    top: calc(var(--y, 0) * $square-width + $marker-offset);
+    left: calc(var(--x, 0) * $square-width + $marker-offset);
 }

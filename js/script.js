@@ -28,7 +28,6 @@ function setNumState(el, key, value, { cssVar = true } = {}) {
   el.style.setProperty(`--${key}`, el.dataset[key]);
 }
 
-
 function createBoard() {
     // Loop 8 times to create the 8 rows on the board
     for (let i = 0; i < 8; i++) {
@@ -45,8 +44,6 @@ function createBoard() {
                 squareDiv.className = "red-square";
             } else { 
                 squareDiv.className = "black-square";
-                setNumState(squareDiv, "x", j);
-                setNumState(squareDiv, "y", i);
                 
                 // Put checkers on the black spaces of the first 3 rows and last 3 rows
                 if (i <= 2) { // black checkers
