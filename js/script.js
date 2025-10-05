@@ -13,13 +13,13 @@ let jump = false;
 
 // Tiny helper functions to streamline the getting and setting of element dataset values
 // Base helpers
-const getData = (el, key) => el.dataset[key];
-const getNum  = (el, key) => Number(el.dataset[key]);
-const getBool = (el, key) => el.dataset[key] === "true";
+const getData = (element, key) => element.dataset[key];
+const getNum  = (element, key) => Number(element.dataset[key]);
+const getBool = (element, key) => element.dataset[key] === "true";
 
-const setData = (el, key, value) => { el.dataset[key] = String(value); };
-const setNum  = (el, key, value) => { el.dataset[key] = String(Number(value)); };
-const setBool = (el, key, value) => { el.dataset[key] = value ? "true" : "false"; };
+const setData = (element, key, value) => { element.dataset[key] = String(value); };
+const setNum  = (element, key, value) => { element.dataset[key] = String(Number(value)); };
+const setBool = (element, key, value) => { element.dataset[key] = value ? "true" : "false"; };
 
 // Write dataset AND the CSS var
 // For use with x and y since those are used in CSS calculations
@@ -79,37 +79,6 @@ function createBoard() {
     boardDiv.appendChild(frag);
 }
 
-function checkerClick(event) {
-    const checker = event.target;
-    const checkerColor = getData(checker, "color");
-    const isKing = getBool(checker, "king");
-    const checkerCoordinate = [
-        getNum(checker, "x"),
-        getNum(checker, "y"),
-    ];
-    
-    // Guard clause: if the checker clicked is the wrong color, or is the same checker clicked again,
-    // or a jump is in progress then exit without doing anything
-    if (
-        checkerColor !== playerTurn.toLowerCase() ||
-        checkerClicked === checker || 
-        jump
-    ) {
-        return;
-    }
-
-    // Main move logic
-
-    // If a previous checker was clicked then clear the move markers
-    if (checkerClicked !== null) {
-        clearMoveMarkers();    
-    }
-
-    checkerClicked = checker;
-    
-    findAndRenderMoves(checkerCoordinate, checkerColor, isKing);
-}
-
 // Determine which directions a checker can move based on color and if it is a king
 function getPossibleMoveDirections(checkerColor, king) {
     if (king) {
@@ -138,29 +107,6 @@ function addDirectionToCoordinate(startingCoordinate, possibleMoveDirection) {
     const x = startingCoordinate[0] + possibleMoveDirection[0];
     const y = startingCoordinate[1] + possibleMoveDirection[1];
     return [x,y];
-}
-
-// Check to see if the destinations are valid spaces on the board 
-// and then if they are empty or can be jumped and create move markers where appropriate
-function validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly = false) {
-    destinationCoordinates.forEach((coordinate, i) => {
-        if (!isCoordinateOnBoard(coordinate)) {
-            return;
-        }
-
-        const { Empty, Color } = isSquareEmpty(coordinate);
-
-        if (Empty && !jumpsOnly) {
-            createMoveMarker(coordinate);
-        }
-
-        if (!Empty && Color !== checkerColor) {
-            const jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
-            if (isCoordinateOnBoard(jumpCoordinate) && isSquareEmpty(jumpCoordinate).Empty) {
-                createMoveMarker(jumpCoordinate, true, coordinate);
-            }
-        }
-    });
 }
 
 function isCoordinateOnBoard([x, y]) {
@@ -194,10 +140,83 @@ function createMoveMarker([x, y], jump = false, jumpedCheckerCoordinate = null) 
     moveMarkerArray.push(moveMarker);
 }
 
+// Check to see if the destinations are valid spaces on the board 
+// and then if they are empty or can be jumped and create move markers where appropriate
+function validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly = false) {
+    destinationCoordinates.forEach((coordinate, i) => {
+        if (!isCoordinateOnBoard(coordinate)) {
+            return;
+        }
+
+        const { Empty, Color } = isSquareEmpty(coordinate);
+
+        if (Empty && !jumpsOnly) {
+            createMoveMarker(coordinate);
+        }
+
+        if (!Empty && Color !== checkerColor) {
+            const jumpCoordinate = addDirectionToCoordinate(coordinate, possibleMoveDirections[i]);
+            if (isCoordinateOnBoard(jumpCoordinate) && isSquareEmpty(jumpCoordinate).Empty) {
+                createMoveMarker(jumpCoordinate, true, coordinate);
+            }
+        }
+    });
+}
+
+function findAndRenderMoves(checkerCoordinate, checkerColor, isKing, jumpsOnly = false) {
+    const possibleMoveDirections = getPossibleMoveDirections(checkerColor, isKing);
+    const destinationCoordinates = possibleMoveDirections.map(direction => 
+        addDirectionToCoordinate(checkerCoordinate, direction)
+    );
+    validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly);
+}
+
 function clearMoveMarkers() {
     while (moveMarkerArray.length) {
         const marker = moveMarkerArray.pop();
         marker.remove();
+    }
+}
+
+function checkerClick(event) {
+    const checker = event.target;
+    const checkerColor = getData(checker, "color");
+    const isKing = getBool(checker, "king");
+    const checkerCoordinate = [
+        getNum(checker, "x"),
+        getNum(checker, "y"),
+    ];
+    
+    // Guard clause: if the checker clicked is the wrong color, or is the same checker clicked again,
+    // or a jump is in progress then exit without doing anything
+    if (
+        checkerColor !== playerTurn.toLowerCase() ||
+        checkerClicked === checker || 
+        jump
+    ) {
+        return;
+    }
+
+    // Main move logic
+
+    // If a previous checker was clicked then clear the move markers
+    if (checkerClicked !== null) {
+        clearMoveMarkers();    
+    }
+
+    checkerClicked = checker;
+    
+    findAndRenderMoves(checkerCoordinate, checkerColor, isKing);
+}
+
+function makeKing(checkerColor) {
+    setBool(checkerClicked, "king", true);
+    if (checkerColor === "black") {
+        checkerClicked.src = blackKingUrl;
+        checkerClicked.alt = "black king checker";
+    } else {
+        checkerClicked.src = redKingUrl;
+        checkerClicked.alt = "red king checker";
     }
 }
 
@@ -261,25 +280,6 @@ function endTurn() {
     playerTurnHeaderText = `${playerTurn}'s Turn`;
     playerTurnHeader.textContent = playerTurnHeaderText;
     playerTurnHeader.style.color = playerTurn.toLowerCase();
-}
-
-function makeKing(checkerColor) {
-    setBool(checkerClicked, "king", true);
-    if (checkerColor === "black") {
-        checkerClicked.src = blackKingUrl;
-        checkerClicked.alt = "black king checker";
-    } else {
-        checkerClicked.src = redKingUrl;
-        checkerClicked.alt = "red king checker";
-    }
-}
-
-function findAndRenderMoves(checkerCoordinate, checkerColor, isKing, jumpsOnly = false) {
-    const possibleMoveDirections = getPossibleMoveDirections(checkerColor, isKing);
-    const destinationCoordinates = possibleMoveDirections.map(direction => 
-        addDirectionToCoordinate(checkerCoordinate, direction)
-    );
-    validateDestinations(destinationCoordinates, possibleMoveDirections, checkerColor, jumpsOnly);
 }
 
 createBoard();
