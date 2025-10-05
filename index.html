@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Checkers Game</title>
+
+        <meta name="description" content="Play a simple browser-based checkers game." />
+
+        <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+        
+        <!-- Preload checkers images -->
+        <link rel="preload" as="image" href="img/red.svg">
+        <link rel="preload" as="image" href="img/black.svg">
+        <link rel="preload" as="image" href="img/red_king.svg">
+        <link rel="preload" as="image" href="img/black_king.svg">
 
         <link rel="stylesheet" href="css/style.scss" />
     </head>
     <body>
         <main>
             <h1>Checkers</h1>
-        
-            <h2 id="playerTurnHeader"></h2>
-            
-            <div id="checkerBoard"></div>
+            <h2 id="playerTurnHeader" role="status" aria-live="polite" aria-atomic="true"></h2>
+            <div id="checkerBoard" aria-label="Checkers board"></div>
         </main>
 
+        <noscript>This game requires JavaScript to be enabled.</noscript>
         <script src="js/script.js" type="module"></script>
     </body>
 </html>
