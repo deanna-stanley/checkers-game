@@ -23,9 +23,9 @@ const setBool = (element, key, value) => { element.dataset[key] = value ? "true"
 
 // Write dataset AND the CSS var
 // For use with x and y since those are used in CSS calculations
-function setNumState(el, key, value, { cssVar = true } = {}) {
-  setNum(el, key, value);
-  el.style.setProperty(`--${key}`, el.dataset[key]);
+function setNumState(element, key, value = {}) {
+  setNum(element, key, value);
+  element.style.setProperty(`--${key}`, element.dataset[key]);
 }
 
 function createChecker(color, x, y) {
