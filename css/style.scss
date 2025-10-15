@@ -1,4 +1,15 @@
-$square-width: min(5vw, 7vh);
+:root {
+    /* include safe-area for notches */
+    --board-margin: max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+
+    /* use small viewport height to avoid overshoot behind the URL bar */
+    --board-short: min(100vw, 100svh);
+
+    /* total board size that fits the short side with a little margin */
+    --board-size: calc(var(--board-short) - (2 * var(--board-margin)));
+}
+
+$square-width: clamp(32px, calc(var(--board-size) / 8), 100px);
 $marker-width: calc($square-width / 2);
 $marker-offset: calc(($square-width - $marker-width) / 2);
 
@@ -16,6 +27,7 @@ h1 {
 #checkerBoard {
     position: relative;
     width: calc(8 * $square-width);
+    aspect-ratio: 1 / 1;
     margin: 0 auto;
 }
 
@@ -28,7 +40,9 @@ h1 {
     display: flex;
 }
 
-.black-square, .red-square, .checker {
+.black-square,
+.red-square,
+.checker {
     width: $square-width;
     aspect-ratio: 1 / 1;
 }

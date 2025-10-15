@@ -4,7 +4,9 @@
   "source": "index.html",
   "scripts": {
     "start": "parcel --open",
-    "build": "parcel build"
+    "build": "parcel build",
+    "deploy": "npm run build && firebase deploy --only hosting",
+    "preview": "npm run build && firebase hosting:channel:deploy preview"
   },
   "keywords": [],
   "author": "Deanna Stanley",
