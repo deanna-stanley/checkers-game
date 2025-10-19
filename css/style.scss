@@ -1,15 +1,11 @@
-:root {
-    /* include safe-area for notches */
-    --board-margin: max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+$h1-font-size: clamp(2rem, 1rem + 5vw, 3.5rem);
+$TurnHeader-font-size: clamp(1.25rem, 0.875rem + 3vw, 2.25rem);
 
-    /* use small viewport height to avoid overshoot behind the URL bar */
-    --board-short: min(100vw, 100svh);
+$board-margin: max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
+$board-short: min(100vw, calc(100svh - $h1-font-size - $TurnHeader-font-size - 20px));
+$board-size: calc($board-short - (2 * $board-margin));
 
-    /* total board size that fits the short side with a little margin */
-    --board-size: calc(var(--board-short) - (2 * var(--board-margin)));
-}
-
-$square-width: clamp(32px, calc(var(--board-size) / 8), 100px);
+$square-width: clamp(32px, calc($board-size / 8), 100px);
 $marker-width: calc($square-width / 2);
 $marker-offset: calc(($square-width - $marker-width) / 2);
 
@@ -19,8 +15,9 @@ body {
 
 h1 {
     text-align: center;
-    font-size: clamp(2rem, 1rem + 5vw, 3.5rem);
+    font-size: $h1-font-size;
     font-weight: bold;
+    margin: 0;
     color: purple;
 }
 
@@ -33,7 +30,9 @@ h1 {
 
 #playerTurnHeader {
     text-align: center;
-    font-size: clamp(1.25rem, 0.875rem + 3vw, 2.25rem);
+    font-size: $TurnHeader-font-size;
+    margin: 0;
+    margin-bottom: 4px;
 }
 
 .board-row {
