@@ -66,9 +66,9 @@ function createBoard() {
 
             if (!isRed) {
                 if (y <= 2) {
-                    checker = createChecker("black", x, y);
-                } else if (y >= 5) {
                     checker = createChecker("red", x, y);
+                } else if (y >= 5) {
+                    checker = createChecker("black", x, y);
                 }
             }
 
@@ -98,12 +98,12 @@ function getPossibleMoveDirections(checkerColor, king) {
             [1, -1],
             [-1, -1],
         ];
-    } else if (checkerColor === "red") {
+    } else if (checkerColor === "black") {
         return [
             [1, -1],
             [-1, -1],
         ];
-    } else if (checkerColor === "black") {
+    } else if (checkerColor === "red") {
         return [
             [1, 1],
             [-1, 1],
@@ -257,7 +257,8 @@ function makeKing(checkerColor) {
 
 function moveMarkerClick(event) {
     const marker = event.currentTarget;
-
+    let kingedThisTurn = false;
+    
     clearMoveMarkers();
 
     const checkerClickedColor = getData(checkerClicked, "color");
@@ -277,11 +278,12 @@ function moveMarkerClick(event) {
 
     // Promote to king if reaching the far row and not already a king
     const reachedKingRow =
-        (checkerClickedColor === "black" && checkerNewY === 7) ||
-        (checkerClickedColor === "red" && checkerNewY === 0);
+        (checkerClickedColor === "red" && checkerNewY === 7) ||
+        (checkerClickedColor === "black" && checkerNewY === 0);
     if (reachedKingRow && !isKing) {
         makeKing(checkerClickedColor);
         isKing = true;
+        kingedThisTurn = true;
     }
 
     // If move was a jump remove the jumped checker and check for additional jumps
@@ -308,13 +310,15 @@ function moveMarkerClick(event) {
             return;
         }
 
-        // 'true' indicates that we are only looking for chain jumps
-        findAndRenderMoves(
-            [checkerNewX, checkerNewY],
-            checkerClickedColor,
-            isKing,
-            true
-        );
+        if (!kingedThisTurn) {
+            // 'true' indicates that we are only looking for chain jumps
+            findAndRenderMoves(
+                [checkerNewX, checkerNewY],
+                checkerClickedColor,
+                isKing,
+                true
+            );
+        }
     }
 
     // If no more markers were generated then clear checkerClicked and jump and end the turn
