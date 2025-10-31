@@ -12,15 +12,16 @@
         <!-- Preload checkers images -->
         <link rel="preload" as="image" href="img/red.svg">
         <link rel="preload" as="image" href="img/black.svg">
-        <link rel="preload" as="image" href="img/red_king.svg">
-        <link rel="preload" as="image" href="img/black_king.svg">
-
+        
         <link rel="stylesheet" href="css/style.scss" />
     </head>
     <body>
         <main>
             <h1>Checkers</h1>
-            <h2 id="playerTurnHeader" role="status" aria-live="polite" aria-atomic="true"></h2>
+            <div id="secondHeading">
+                <h2 id="playerTurnHeader" role="status" aria-live="polite" aria-atomic="true"></h2>
+                <button id="restartButton">Restart</button>
+            </div>
             <div id="checkerBoard" aria-label="Checkers board"></div>
         </main>
 

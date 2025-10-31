@@ -1,5 +1,5 @@
-$h1-font-size: clamp(2rem, 1rem + 5vw, 3.5rem);
-$TurnHeader-font-size: clamp(1.25rem, 0.875rem + 3vw, 2.25rem);
+$h1-font-size: min(clamp(2rem, 1rem + 5vw, 3.5rem), clamp(2rem, 1rem + 5vh, 3.5rem));
+$TurnHeader-font-size: min(clamp(1.25rem, 0.875rem + 3vw, 2.25rem), clamp(1.25rem, 0.875rem + 3vh, 2.25rem));
 
 $board-margin: max(8px, env(safe-area-inset-left), env(safe-area-inset-right));
 $board-short: min(100vw, calc(100svh - $h1-font-size - $TurnHeader-font-size - 20px));
@@ -21,6 +21,14 @@ h1 {
     color: purple;
 }
 
+#restartButton {
+    font-size: min(clamp(.75rem, 0.5rem + 1.5vw, 1rem), clamp(.75rem, 0.5rem + 1.5vh, 1rem));
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: lavender;
+    margin-right: calc($square-width /2);
+}
+
 #checkerBoard {
     position: relative;
     width: calc(8 * $square-width);
@@ -28,11 +36,20 @@ h1 {
     margin: 0 auto;
 }
 
+#secondHeading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: auto;
+    width: calc($square-width * 8);
+}
+
 #playerTurnHeader {
-    text-align: center;
     font-size: $TurnHeader-font-size;
     margin: 0;
     margin-bottom: 4px;
+    flex-grow: 1;
+    text-align: center;
 }
 
 .board-row {

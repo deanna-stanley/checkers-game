@@ -1,17 +1,20 @@
-const checkerArray = [];
-const moveMarkerArray = [];
 const blackCheckerUrl = new URL("../img/black.svg", import.meta.url);
 const redCheckerUrl = new URL("../img/red.svg", import.meta.url);
 const blackKingUrl = new URL("../img/black_king.svg", import.meta.url);
 const redKingUrl = new URL("../img/red_king.svg", import.meta.url);
 const boardDiv = document.querySelector("#checkerBoard");
 const playerTurnHeader = document.querySelector("#playerTurnHeader");
+const restartButton = document.querySelector("#restartButton");
+let checkerArray = [];
+let moveMarkerArray = [];
 let playerTurn = "Black";
 let playerTurnHeaderText = `${playerTurn}'s Turn`;
 let checkerClicked = null;
 let jump = false;
 let blackCheckerCount = 12;
 let redCheckerCount = 12;
+
+restartButton.addEventListener("click", restartGame);
 
 // Tiny helper functions to streamline the getting and setting of element dataset values
 // Base helpers
@@ -87,7 +90,20 @@ function createBoard() {
 }
 
 // TODO: Create a function to start a new game that resets everything
-// boardDiv.innerHTML = ""; // safe reset
+function restartGame() {
+    boardDiv.innerHTML = "";
+    checkerArray = [];
+    moveMarkerArray = [];
+    playerTurn = "Black";
+    playerTurnHeaderText = `${playerTurn}'s Turn`;
+    playerTurnHeader.textContent = playerTurnHeaderText;
+    playerTurnHeader.style.color = playerTurn.toLowerCase();
+    checkerClicked = null;
+    jump = false;
+    blackCheckerCount = 12;
+    redCheckerCount = 12;
+    createBoard();
+}
 
 // Determine which directions a checker can move based on color and if it is a king
 function getPossibleMoveDirections(checkerColor, king) {
