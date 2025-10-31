@@ -89,7 +89,6 @@ function createBoard() {
     boardDiv.appendChild(frag);
 }
 
-// TODO: Create a function to start a new game that resets everything
 function restartGame() {
     boardDiv.innerHTML = "";
     checkerArray = [];
